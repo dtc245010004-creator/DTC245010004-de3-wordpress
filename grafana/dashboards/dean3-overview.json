@@ -55,6 +55,15 @@
       "targets": [{"expr": "up", "legendFormat": "{{job}} / {{instance}}", "refId": "A"}],
       "title": "Exporter and Prometheus target status",
       "type": "stat"
+    },
+    {
+      "datasource": {"type": "loki", "uid": "loki"},
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 22},
+      "id": 6,
+      "options": {"dedupStrategy": "none", "enableInfiniteScrolling": false, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true},
+      "targets": [{"expr": "{job=\"docker\"}", "refId": "A"}],
+      "title": "Container logs",
+      "type": "logs"
     }
   ],
   "refresh": "15s",

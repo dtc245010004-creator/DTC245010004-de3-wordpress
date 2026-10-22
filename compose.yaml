@@ -51,7 +51,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "php -r '$$s=@fsockopen(\"127.0.0.1\",80); exit($$s?0:1);'"]
+      test: ["CMD-SHELL", "php -r 'if (@fsockopen(\"127.0.0.1\",80)) { exit(0); } exit(1);'"]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -218,11 +218,54 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  loki:
+    image: grafana/loki:3.7.8
+    restart: unless-stopped
+    command:
+      - -config.file=/etc/loki/loki.yml
+    volumes:
+      - ./loki/loki.yml:/etc/loki/loki.yml:ro
+      - loki_data:/loki
+    networks:
+      - metrics
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  promtail:
+    image: grafana/promtail:3.6.8
+    restart: unless-stopped
+    user: "0:0"
+    command:
+      - -config.file=/etc/promtail/promtail.yml
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - promtail_positions:/run/promtail
+    networks:
+      - metrics
+    depends_on:
+      - loki
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
 volumes:
   db_data:
   wordpress_data:
   prometheus_data:
   grafana_data:
+  loki_data:
+  promtail_positions:
 
 networks:
   edge:
