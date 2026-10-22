@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+/data/
+/tmp/
+wp-content/uploads/*
+!wp-content/uploads/.gitkeep
