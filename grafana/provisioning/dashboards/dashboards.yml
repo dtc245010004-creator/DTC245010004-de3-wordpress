@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: De An 3
+    orgId: 1
+    folder: De An 3
+    type: file
+    disableDeletion: true
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards
