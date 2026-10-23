@@ -3,7 +3,7 @@ Theme Name: De An 3 An Nhien Store
 Theme URI: https://example.invalid/de-an-3
 Author: An Nhien
 Description: A calm, responsive Vietnamese product-promotion storefront for the De An 3 project.
-Version: 1.1.0
+Version: 1.2.0
 Requires at least: 6.8
 Requires PHP: 8.2
 Text Domain: dean3-store
@@ -51,8 +51,9 @@ img { max-width: 100%; height: auto; }
 .art-disc::before, .art-disc::after { content: ""; position: absolute; border: 1px solid rgba(49,94,80,.2); border-radius: 50%; inset: 10%; }
 .art-disc::after { inset: 21%; }
 .art-sun { position: absolute; top: 12%; right: 16%; width: 72px; height: 72px; border-radius: 50%; background: #e5b879; box-shadow: 0 0 0 13px rgba(229,184,121,.16); }
-.art-vase { position: absolute; bottom: 16%; left: 31%; width: 132px; height: 205px; border-radius: 48% 48% 35% 35% / 28% 28% 20% 20%; background: linear-gradient(130deg,#e79c78,#c76c59); transform: rotate(-8deg); box-shadow: 30px 20px 50px rgba(84,89,65,.17); }
-.art-vase::before { content: ""; position: absolute; top: -32px; left: 38px; width: 58px; height: 56px; border-radius: 20px 20px 8px 8px; background: #ca765f; }
+.art-tea-caddy { position: absolute; bottom: 18%; left: 29%; width: 150px; height: 166px; border-radius: 22px 22px 18px 18px; background: linear-gradient(130deg,#e79c78,#c76c59); transform: rotate(-7deg); box-shadow: 30px 20px 50px rgba(84,89,65,.17); }
+.art-tea-caddy::before { content: ""; position: absolute; top: -17px; left: 45px; width: 60px; height: 22px; border-radius: 7px 7px 4px 4px; background: #ca765f; }
+.art-tea-caddy::after { content: "AN NHIÊN"; position: absolute; top: 44px; left: 20px; display: grid; place-items: center; width: 110px; height: 65px; border: 1px solid rgba(255,254,250,.68); color: #fffefa; font: 700 9px/1 var(--sans); letter-spacing: .18em; }
 .art-leaf { position: absolute; z-index: 1; width: 98px; height: 176px; border-radius: 100% 0 100% 0; background: linear-gradient(140deg,#668a6a,#294f45); transform: rotate(31deg); }
 .art-leaf.one { top: 7%; left: 30%; }
 .art-leaf.two { top: 18%; left: 53%; transform: rotate(68deg) scale(.82); background: linear-gradient(140deg,#97ad81,#4e765f); }
@@ -119,7 +120,7 @@ img { max-width: 100%; height: auto; }
   .hero { min-height: 0; padding-top: 58px; }
   .hero h1 { font-size: 52px; }
   .hero-art { min-height: 340px; }
-  .art-vase { transform: scale(.82) rotate(-8deg); }
+  .art-tea-caddy { transform: scale(.82) rotate(-7deg); }
   .section-heading { display: block; }
   .section-heading > p { margin-top: 12px; }
   .products-section, .story-section { padding-top: 70px; padding-bottom: 70px; }
@@ -127,3 +128,4 @@ img { max-width: 100%; height: auto; }
   .product-visual, .product-image { min-height: 245px; height: 245px; }
   .site-footer { flex-direction: column; }
 }
+

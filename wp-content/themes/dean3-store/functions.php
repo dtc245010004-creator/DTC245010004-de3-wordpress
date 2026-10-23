@@ -13,6 +13,7 @@ add_action('after_setup_theme', 'dean3_store_setup');
 
 function dean3_store_assets(): void
 {
-    wp_enqueue_style('dean3-store', get_stylesheet_uri(), [], '1.1.0');
+    wp_enqueue_style('dean3-store', get_stylesheet_uri(), [], '1.2.0');
 }
 add_action('wp_enqueue_scripts', 'dean3_store_assets');
+

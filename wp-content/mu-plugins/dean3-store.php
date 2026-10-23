@@ -2,7 +2,7 @@
 /**
  * Plugin Name: De An 3 Product Showcase
  * Description: Adds a small product catalog and a Vietnamese showcase landing page.
- * Version: 1.0.0
+ * Version: 1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -31,7 +31,8 @@ function dean3_register_product_type(): void
 add_action('init', 'dean3_seed_showcase', 20);
 function dean3_seed_showcase(): void
 {
-    if (get_option('dean3_showcase_seeded')) {
+    $catalog_version = '3';
+    if (get_option('dean3_showcase_catalog_version') === $catalog_version) {
         return;
     }
 
@@ -39,48 +40,66 @@ function dean3_seed_showcase(): void
         switch_theme('dean3-store');
     }
 
+    if (get_option('blogname') === 'Website quảng bá sản phẩm') {
+        update_option('blogname', 'An Nhiên · Trà Việt');
+    }
+
     $products = [
         [
-            'title' => 'Bình giữ nhiệt Mộc 500 ml',
-            'excerpt' => 'Giữ nóng hoặc lạnh suốt ngày dài, thân thép không gỉ và nắp chống tràn.',
-            'price' => '389000',
-            'old_price' => '499000',
-            'mark' => 'MỘC',
-            'content' => 'Thiết kế gọn nhẹ cho những chuyến đi hằng ngày. Lớp thép không gỉ dễ vệ sinh, nắp kín hạn chế rò nước trong túi.',
+            'legacy_title' => 'Bình giữ nhiệt Mộc 500 ml',
+            'title' => 'Trà Shan Tuyết cổ thụ Hà Giang · 100 g',
+            'excerpt' => 'Vị trà đậm dịu, hương núi rừng thoảng nhẹ; hợp để pha ấm nóng trong những buổi sáng chậm rãi.',
+            'price' => '185000',
+            'old_price' => '220000',
+            'mark' => 'SHAN',
+            'badge' => 'Trà vùng cao',
+            'content' => 'Trà Shan Tuyết được giới thiệu với hương thơm mộc mạc, vị chát dịu và hậu vị ngọt. Gói 100 g phù hợp để thưởng trà tại nhà hoặc làm quà nhỏ. Dùng nước nóng vừa sôi, tráng trà nhanh rồi điều chỉnh thời gian hãm theo khẩu vị.',
         ],
         [
-            'title' => 'Tai nghe không dây AirSound Mini',
-            'excerpt' => 'Âm thanh rõ, hộp sạc nhỏ gọn và kết nối ổn định cho ngày bận rộn.',
-            'price' => '1290000',
-            'old_price' => '1590000',
-            'mark' => 'AIR',
-            'content' => 'AirSound Mini có thiết kế nhẹ, thao tác cảm ứng đơn giản và hộp sạc bỏ túi. Phù hợp nghe nhạc, học trực tuyến và gọi điện.',
+            'legacy_title' => 'Tai nghe không dây AirSound Mini',
+            'title' => 'Trà sen Tây Hồ ướp bông · 100 g',
+            'excerpt' => 'Hương sen thanh thoát hòa cùng vị trà xanh êm dịu, dành cho một khoảng nghỉ nhẹ nhàng trong ngày.',
+            'price' => '295000',
+            'old_price' => '350000',
+            'mark' => 'SEN',
+            'badge' => 'Ướp hương sen',
+            'content' => 'Trà sen mang hương thơm dịu, vị trà cân bằng và dễ thưởng thức cùng gia đình. Gói 100 g thích hợp pha ấm nhỏ, dùng sau bữa ăn hoặc trong những buổi trò chuyện. Bảo quản kín, nơi khô ráo và tránh ánh nắng trực tiếp.',
         ],
         [
-            'title' => 'Đèn bàn Lumina Study',
-            'excerpt' => 'Ánh sáng dịu mắt, ba mức sáng và chân đế gọn cho góc học tập.',
-            'price' => '549000',
-            'old_price' => '699000',
-            'mark' => 'LUMI',
-            'content' => 'Đèn bàn Lumina Study có ba mức sáng, cổ đèn điều chỉnh linh hoạt và thiết kế tối giản cho bàn học hoặc bàn làm việc.',
+            'legacy_title' => 'Đèn bàn Lumina Study',
+            'title' => 'Chè xanh Tân Cương Thái Nguyên · 200 g',
+            'excerpt' => 'Chén trà xanh trong, vị chát vừa và hậu ngọt; lựa chọn quen thuộc cho nếp trà Việt mỗi ngày.',
+            'price' => '165000',
+            'old_price' => '195000',
+            'mark' => 'THÁI',
+            'badge' => 'Trà xanh Việt',
+            'content' => 'Chè xanh Tân Cương có hương cốm nhẹ, vị chát dịu và hậu vị ngọt. Túi 200 g dùng được nhiều lần pha, phù hợp uống nóng hằng ngày. Nên tráng trà nhanh và hãm trong thời gian ngắn để giữ vị thanh.',
         ],
     ];
 
     foreach ($products as $product) {
         $existing = get_page_by_title($product['title'], OBJECT, 'dean3_product');
-        if (!$existing) {
-            $product_id = wp_insert_post([
+        if (!$existing && !empty($product['legacy_title'])) {
+            $existing = get_page_by_title($product['legacy_title'], OBJECT, 'dean3_product');
+        }
+        $post_data = [
                 'post_type' => 'dean3_product',
                 'post_status' => 'publish',
                 'post_title' => $product['title'],
                 'post_excerpt' => $product['excerpt'],
                 'post_content' => $product['content'],
-            ]);
-            if (!is_wp_error($product_id) && $product_id) {
-                update_post_meta($product_id, '_dean3_price', $product['price']);
-                update_post_meta($product_id, '_dean3_old_price', $product['old_price']);
-                update_post_meta($product_id, '_dean3_mark', $product['mark']);
-            }
+        ];
+        if ($existing) {
+            $post_data['ID'] = $existing->ID;
+            $product_id = wp_update_post($post_data, true);
+        } else {
+            $product_id = wp_insert_post($post_data, true);
+        }
+        if (!is_wp_error($product_id) && $product_id) {
+            update_post_meta($product_id, '_dean3_price', $product['price']);
+            update_post_meta($product_id, '_dean3_old_price', $product['old_price']);
+            update_post_meta($product_id, '_dean3_mark', $product['mark']);
+            update_post_meta($product_id, '_dean3_badge', $product['badge']);
         }
     }
 
@@ -103,6 +122,7 @@ function dean3_seed_showcase(): void
     }
 
     update_option('dean3_showcase_seeded', 1);
+    update_option('dean3_showcase_catalog_version', $catalog_version);
 }
 
 add_shortcode('dean3_products', 'dean3_render_products');
@@ -129,6 +149,7 @@ function dean3_render_products(): string
         $price = (int) get_post_meta($product_id, '_dean3_price', true);
         $old_price = (int) get_post_meta($product_id, '_dean3_old_price', true);
         $mark = get_post_meta($product_id, '_dean3_mark', true);
+        $badge = get_post_meta($product_id, '_dean3_badge', true);
         $tone = ['sage', 'rose', 'butter'][$index % 3];
         echo '<article class="product-card">';
         echo '<a class="product-visual ' . esc_attr($tone) . '" href="' . esc_url(get_permalink()) . '" aria-label="Xem ' . esc_attr(get_the_title()) . '">';
@@ -138,8 +159,8 @@ function dean3_render_products(): string
             echo '<span class="product-mark">' . esc_html($mark ?: 'AN') . '</span>';
             echo '<span class="product-orbit" aria-hidden="true"></span>';
         }
-        echo '<span class="product-badge">Được yêu thích</span></a>';
-        echo '<div class="product-info"><p class="product-kicker">AN NHIÊN SELECT</p>';
+        echo '<span class="product-badge">' . esc_html($badge ?: 'Trà Việt') . '</span></a>';
+        echo '<div class="product-info"><p class="product-kicker">TRÀ VIỆT · AN NHIÊN</p>';
         echo '<h3><a href="' . esc_url(get_permalink()) . '">' . esc_html(get_the_title()) . '</a></h3>';
         echo '<p class="product-excerpt">' . esc_html(get_the_excerpt()) . '</p>';
         echo '<div class="product-bottom"><p class="product-price">' . esc_html(number_format_i18n($price)) . ' <small>₫</small>';
@@ -153,3 +174,4 @@ function dean3_render_products(): string
     wp_reset_postdata();
     return (string) ob_get_clean();
 }
+

@@ -11,11 +11,12 @@
   <header class="site-header">
     <a class="brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="An Nhiên - trang chủ">
       <span class="brand-mark" aria-hidden="true">AN</span>
-      <span>AN NHIÊN<small>PRODUCTS FOR GOOD DAYS</small></span>
+      <span>AN NHIÊN<small>TRÀ VIỆT TUYỂN CHỌN</small></span>
     </a>
     <nav class="main-nav" aria-label="Điều hướng chính">
-      <a href="<?php echo esc_url(home_url('/#san-pham')); ?>">Sản phẩm</a>
+      <a href="<?php echo esc_url(home_url('/#san-pham')); ?>">Các loại trà</a>
       <a href="<?php echo esc_url(home_url('/#cau-chuyen')); ?>">Câu chuyện</a>
-      <a class="nav-cta" href="<?php echo esc_url(home_url('/#san-pham')); ?>">Khám phá ngay</a>
+      <a class="nav-cta" href="<?php echo esc_url(home_url('/#san-pham')); ?>">Chọn trà</a>
     </nav>
   </header>
+

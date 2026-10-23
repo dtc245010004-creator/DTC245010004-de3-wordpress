@@ -3,25 +3,26 @@
 **Đề tài:** Đề 3 - Website quảng bá sản phẩm bằng WordPress  
 **Repository:** [DTC245010004-de3-wordpress](https://github.com/dtc245010004-creator/DTC245010004-de3-wordpress)
 
-Dự án dùng Docker Compose để chạy WordPress, MySQL, phpMyAdmin và Nginx reverse proxy. Giao diện An Nhiên được viết thành theme WordPress; MU plugin tự tạo trang chủ và ba sản phẩm mẫu khi cài đặt lần đầu.
+Dự án dùng Docker Compose để chạy WordPress, MySQL, phpMyAdmin và Nginx reverse proxy. Giao diện An Nhiên quảng bá trà Việt; MU plugin tự tạo trang chủ cùng ba sản phẩm mẫu: Trà Shan Tuyết Hà Giang, Trà sen Tây Hồ và chè xanh Tân Cương Thái Nguyên.
 
 ## Khởi chạy trên Windows
 
 Cần Docker Desktop ở chế độ Linux containers và PowerShell. Tại thư mục repository, chạy:
 
 ```powershell
-.\scripts\setup.ps1
-docker compose up -d --wait
+.\scripts\setup.ps1 -Start
 docker compose ps
 .\scripts\demo.ps1
 ```
+
+`setup.ps1 -Start` chờ MySQL khỏe, bảo đảm tài khoản exporter tồn tại (kể cả khi volume đã được khởi tạo từ lần chạy lỗi trước), sau đó mới khởi động các dịch vụ còn lại.
 
 Mở các địa chỉ sau:
 
 | Thành phần | URL | Đăng nhập |
 | --- | --- | --- |
-| Website An Nhiên | http://localhost:8080 | Tạo tài khoản quản trị ở lần truy cập đầu |
-| phpMyAdmin | http://localhost:8080/db-admin/ | Dùng `MYSQL_USER` và `MYSQL_PASSWORD` trong `.env` |
+| Website An Nhiên | http://localhost:8081 | Tạo tài khoản quản trị ở lần truy cập đầu |
+| phpMyAdmin | http://localhost:8081/db-admin/ | Dùng `MYSQL_USER` và `MYSQL_PASSWORD` trong `.env` |
 | Grafana | http://localhost:3000 | Dùng `GRAFANA_ADMIN_USER` và `GRAFANA_ADMIN_PASSWORD` trong `.env` |
 | Prometheus | http://localhost:9090 | Chỉ mở trên máy host local |
 
@@ -60,7 +61,7 @@ docs/                                Báo cáo và tài liệu minh chứng
 
 ## Cấu hình reverse proxy
 
-Nginx nhận HTTP tại `127.0.0.1:8080`, chuyển request tới WordPress và định tuyến `/db-admin/` tới phpMyAdmin. Cấu hình gửi `Host`, địa chỉ client và scheme tới upstream; áp dụng `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` và `Permissions-Policy`. Các response header này phù hợp cho demo HTTP nội bộ; triển khai công khai cần thêm TLS và điều chỉnh hostname.
+Nginx nhận HTTP tại `127.0.0.1:8081` trên máy host và cổng `8080` trong container, chuyển request tới WordPress và định tuyến `/db-admin/` tới phpMyAdmin. Cấu hình gửi `Host`, địa chỉ client và scheme tới upstream; áp dụng `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` và `Permissions-Policy`. Các response header này phù hợp cho demo HTTP nội bộ; triển khai công khai cần thêm TLS và điều chỉnh hostname.
 
 ## Giám sát với Prometheus và Grafana
 
@@ -113,3 +114,4 @@ Promtail cần đọc Docker API và file log của Docker để ánh xạ tên 
 3. Loki + Promtail tập trung logs và truy vấn bằng LogQL.
 
 Commit hiện có lần lượt chứa website + Nginx, Prometheus + Grafana và Loki + Promtail. Repository công khai: https://github.com/dtc245010004-creator/DTC245010004-de3-wordpress. Lịch sử commit dùng địa chỉ email noreply của GitHub; `.env` chứa mật khẩu được giữ cục bộ và không được đưa lên remote. Báo cáo có thông tin cá nhân được nộp riêng, không nằm trong repository.
+
