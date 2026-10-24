@@ -4,7 +4,6 @@ services:
   db:
     image: mysql:8.4
     restart: unless-stopped
-    env_file: .env
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:?Run scripts/setup.ps1 first}
       MYSQL_USER: ${MYSQL_USER:-wpuser}
@@ -30,7 +29,6 @@ services:
   wordpress:
     image: wordpress:7.1-php8.3-apache
     restart: unless-stopped
-    env_file: .env
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE:?Run scripts/setup.ps1 first}
@@ -45,6 +43,7 @@ services:
       - wordpress_data:/var/www/html
       - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins:ro
       - ./wp-content/themes:/var/www/html/wp-content/themes:ro
+      - ./scripts/provision-wordpress.php:/usr/local/bin/provision-wordpress.php:ro
     networks:
       - backend
     depends_on:

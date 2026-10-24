@@ -15,18 +15,18 @@ docker compose ps
 .\scripts\demo.ps1
 ```
 
-`setup.ps1 -Start` kiểm tra cấu hình Compose, khởi động các dịch vụ và chờ các healthcheck hoàn tất.
+`setup.ps1 -Start` tạo `.env` nếu cần, kiểm tra cấu hình, khởi động các dịch vụ và chờ healthcheck. Lệnh này cũng đồng bộ mật khẩu với MySQL và Grafana đang lưu trong Docker volume, rồi chuẩn bị tài khoản quản trị WordPress. Dữ liệu hiện có được giữ nguyên.
 
 Mở các địa chỉ sau:
 
 | Thành phần | URL | Đăng nhập |
 | --- | --- | --- |
-| Website An Nhiên | http://localhost:8080 | Tạo tài khoản quản trị ở lần truy cập đầu |
-| phpMyAdmin | http://localhost:8080/db-admin/ | Dùng `MYSQL_USER` và `MYSQL_PASSWORD` trong `.env` |
-| Grafana | http://localhost:3000 | Dùng `GRAFANA_ADMIN_USER` và `GRAFANA_ADMIN_PASSWORD` trong `.env` |
+| Website An Nhiên | http://localhost:8080 | `teacher` / `teacher123` |
+| phpMyAdmin | http://localhost:8080/db-admin/ | `wpuser` / `wp123456` |
+| Grafana | http://localhost:3000 | `admin` / `admin123` |
 | Prometheus | http://localhost:9090 | Chỉ mở trên máy host local |
 
-`setup.ps1` chỉ tạo `.env` nếu tệp chưa tồn tại. Tệp chứa mật khẩu ngẫu nhiên 256-bit và được Git bỏ qua; không đưa `.env` lên GitHub. MySQL và Grafana lưu thông tin đăng nhập trong named volume khi khởi tạo lần đầu, nên xóa rồi tạo lại `.env` không đổi mật khẩu trong volume hiện có. Giữ bản sao của `.env`; nếu tệp bị mất, khôi phục bản sao tương ứng với dữ liệu hiện tại. Chỉ chạy `docker compose down -v` khi chủ ý xóa toàn bộ dữ liệu để khởi tạo stack mới.
+Các mật khẩu trên được đặt cố định để tiện trình bày trong lớp và chỉ nên dùng trên máy local. Không dùng chúng cho máy chủ công khai. `setup.ps1 -Start` giữ nguyên mật khẩu root và tài khoản nội bộ của exporter, đồng thời cập nhật tài khoản đăng nhập trên các trang trên cả khi named volume đã tồn tại. `.env` vẫn bị Git bỏ qua.
 
 ## Các dịch vụ
 
@@ -53,7 +53,8 @@ db/init/                             Tài khoản metrics chỉ đọc cho MySQL
 nginx/default.conf                   Reverse proxy và security headers
 wp-content/mu-plugins/               Tạo nội dung demo và shortcode sản phẩm
 wp-content/themes/dean3-store/       Giao diện storefront
-scripts/setup.ps1                    Sinh secrets và kiểm tra Compose
+scripts/setup.ps1                    Đồng bộ tài khoản demo và khởi động Compose
+scripts/provision-wordpress.php      Tạo hoặc cập nhật tài khoản quản trị WordPress
 scripts/demo.ps1                     Kiểm tra URL và scrape target khi stack chạy
 prometheus/, grafana/, loki/, promtail/  Cấu hình giám sát và logging
 docs/                                Báo cáo và tài liệu minh chứng
@@ -97,7 +98,7 @@ Promtail cần đọc Docker API và file log của Docker để ánh xạ tên 
 
 ## Bảo vệ thông tin và dịch vụ
 
-- Mật khẩu DB, root DB, tài khoản exporter và Grafana được sinh cục bộ; `.env` bị loại trừ bằng `.gitignore`, còn `.env.example` chỉ chứa giá trị mẫu.
+- Tài khoản trình bày WordPress, phpMyAdmin và Grafana dùng mật khẩu demo cố định; chỉ dùng trên máy local. Mật khẩu root DB và exporter vẫn được sinh cục bộ; `.env` bị loại trừ bằng `.gitignore`.
 - Tài khoản `exporter` chỉ có `PROCESS`, `REPLICATION CLIENT`, `SELECT`; WordPress dùng tài khoản chỉ có quyền trên database ứng dụng.
 - Cổng DB và phpMyAdmin không được publish ra host; backend network là `internal: true`.
 - Nginx chạy bằng image unprivileged, filesystem chỉ đọc và bỏ toàn bộ Linux capabilities.
