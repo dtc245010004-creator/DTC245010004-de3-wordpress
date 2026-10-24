@@ -24,7 +24,7 @@ Mở các địa chỉ sau:
 | Website An Nhiên | http://localhost:8080 | `teacher` / `teacher123` |
 | phpMyAdmin | http://localhost:8080/db-admin/ | `wpuser` / `wp123456` |
 | Grafana | http://localhost:3001 | `admin` / `admin123` |
-| Prometheus | http://localhost:9090 | Chỉ mở trên máy host local |
+| Prometheus | http://localhost:9091 | Chỉ mở trên máy host local |
 
 Các mật khẩu trên được đặt cố định để tiện trình bày trong lớp và chỉ nên dùng trên máy local. Không dùng chúng cho máy chủ công khai. `setup.ps1 -Start` giữ nguyên mật khẩu root và tài khoản nội bộ của exporter, đồng thời cập nhật tài khoản đăng nhập trên các trang trên cả khi named volume đã tồn tại. `.env` vẫn bị Git bỏ qua.
 

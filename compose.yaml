@@ -176,12 +176,13 @@ services:
       - --storage.tsdb.retention.time=7d
       - --web.enable-lifecycle
     ports:
-      - "127.0.0.1:9090:9090"
+      - "127.0.0.1:9091:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/rules:/etc/prometheus/rules:ro
       - prometheus_data:/prometheus
     networks:
+      - edge
       - metrics
     depends_on:
       - nginx-exporter
