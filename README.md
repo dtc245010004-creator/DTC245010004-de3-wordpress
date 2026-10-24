@@ -15,18 +15,18 @@ docker compose ps
 .\scripts\demo.ps1
 ```
 
-`setup.ps1 -Start` chờ MySQL khỏe, bảo đảm tài khoản exporter tồn tại (kể cả khi volume đã được khởi tạo từ lần chạy lỗi trước), sau đó mới khởi động các dịch vụ còn lại.
+`setup.ps1 -Start` kiểm tra cấu hình Compose, khởi động các dịch vụ và chờ các healthcheck hoàn tất.
 
 Mở các địa chỉ sau:
 
 | Thành phần | URL | Đăng nhập |
 | --- | --- | --- |
-| Website An Nhiên | http://localhost:8081 | Tạo tài khoản quản trị ở lần truy cập đầu |
-| phpMyAdmin | http://localhost:8081/db-admin/ | Dùng `MYSQL_USER` và `MYSQL_PASSWORD` trong `.env` |
+| Website An Nhiên | http://localhost:8080 | Tạo tài khoản quản trị ở lần truy cập đầu |
+| phpMyAdmin | http://localhost:8080/db-admin/ | Dùng `MYSQL_USER` và `MYSQL_PASSWORD` trong `.env` |
 | Grafana | http://localhost:3000 | Dùng `GRAFANA_ADMIN_USER` và `GRAFANA_ADMIN_PASSWORD` trong `.env` |
 | Prometheus | http://localhost:9090 | Chỉ mở trên máy host local |
 
-`setup.ps1` sinh mật khẩu ngẫu nhiên 256-bit trong `.env`. Tệp này được Git bỏ qua. Không đưa `.env` lên GitHub. Nếu cần tạo lại cấu hình, chỉ xóa `.env` khi đã lưu thông tin đăng nhập; script sẽ tạo bộ mật khẩu mới.
+`setup.ps1` chỉ tạo `.env` nếu tệp chưa tồn tại. Tệp chứa mật khẩu ngẫu nhiên 256-bit và được Git bỏ qua; không đưa `.env` lên GitHub. MySQL và Grafana lưu thông tin đăng nhập trong named volume khi khởi tạo lần đầu, nên xóa rồi tạo lại `.env` không đổi mật khẩu trong volume hiện có. Giữ bản sao của `.env`; nếu tệp bị mất, khôi phục bản sao tương ứng với dữ liệu hiện tại. Chỉ chạy `docker compose down -v` khi chủ ý xóa toàn bộ dữ liệu để khởi tạo stack mới.
 
 ## Các dịch vụ
 
@@ -61,7 +61,7 @@ docs/                                Báo cáo và tài liệu minh chứng
 
 ## Cấu hình reverse proxy
 
-Nginx nhận HTTP tại `127.0.0.1:8081` trên máy host và cổng `8080` trong container, chuyển request tới WordPress và định tuyến `/db-admin/` tới phpMyAdmin. Cấu hình gửi `Host`, địa chỉ client và scheme tới upstream; áp dụng `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` và `Permissions-Policy`. Các response header này phù hợp cho demo HTTP nội bộ; triển khai công khai cần thêm TLS và điều chỉnh hostname.
+Nginx nhận HTTP tại `127.0.0.1:8080`, chuyển request tới WordPress và định tuyến `/db-admin/` tới phpMyAdmin. Reverse proxy giữ nguyên `Host` kèm cổng từ request để WordPress tạo URL chính tắc đúng, đồng thời gửi địa chỉ client và scheme tới upstream. Nginx áp dụng `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` và `Permissions-Policy`. Các response header này phù hợp cho demo HTTP nội bộ; triển khai công khai cần thêm TLS và điều chỉnh hostname.
 
 ## Giám sát với Prometheus và Grafana
 
@@ -97,7 +97,7 @@ Promtail cần đọc Docker API và file log của Docker để ánh xạ tên 
 
 ## Bảo vệ thông tin và dịch vụ
 
-- Mật khẩu DB, root DB, tài khoản exporter và Grafana được sinh cục bộ; `.env` không được commit.
+- Mật khẩu DB, root DB, tài khoản exporter và Grafana được sinh cục bộ; `.env` bị loại trừ bằng `.gitignore`, còn `.env.example` chỉ chứa giá trị mẫu.
 - Tài khoản `exporter` chỉ có `PROCESS`, `REPLICATION CLIENT`, `SELECT`; WordPress dùng tài khoản chỉ có quyền trên database ứng dụng.
 - Cổng DB và phpMyAdmin không được publish ra host; backend network là `internal: true`.
 - Nginx chạy bằng image unprivileged, filesystem chỉ đọc và bỏ toàn bộ Linux capabilities.
@@ -113,5 +113,5 @@ Promtail cần đọc Docker API và file log của Docker để ánh xạ tên 
 2. Prometheus + Grafana thu thập metrics container, Nginx và MySQL.
 3. Loki + Promtail tập trung logs và truy vấn bằng LogQL.
 
-Commit hiện có lần lượt chứa website + Nginx, Prometheus + Grafana và Loki + Promtail. Repository công khai: https://github.com/dtc245010004-creator/DTC245010004-de3-wordpress. Lịch sử commit dùng địa chỉ email noreply của GitHub; `.env` chứa mật khẩu được giữ cục bộ và không được đưa lên remote. Báo cáo có thông tin cá nhân được nộp riêng, không nằm trong repository.
+Commit hiện có lần lượt chứa website + Nginx, Prometheus + Grafana và Loki + Promtail. Repository công khai: https://github.com/dtc245010004-creator/DTC245010004-de3-wordpress. Báo cáo có thông tin cá nhân được nộp riêng, không nằm trong repository.
 

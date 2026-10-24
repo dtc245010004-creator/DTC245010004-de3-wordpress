@@ -19,7 +19,7 @@ services:
       - backend
       - metrics
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD-SHELL", "mysqladmin --protocol=socket -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" ping --silent"]
       interval: 10s
       timeout: 5s
       retries: 12
