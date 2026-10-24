@@ -87,9 +87,9 @@ Promtail tìm container đang chạy qua Docker service discovery, đọc log JS
 Trong Grafana, mở **Explore**, chọn datasource **Loki**, rồi chạy các LogQL query:
 
 ```logql
-{job="docker"}
-{job="docker", container=~".*wordpress.*"}
-{job="docker"} |= "error"
+{container=~".+"}
+{container=~".*-wordpress-[0-9]+"}
+{container=~".+"} |= "error"
 ```
 
 Promtail cần đọc Docker API và file log của Docker để ánh xạ tên container tới log stream. Cấu hình chỉ mount socket và thư mục log ở chế độ read-only, nhưng quyền truy cập socket vẫn là quyền nhạy cảm; chỉ dùng stack này trên máy demo tin cậy và không xuất bản network metrics/logging ra ngoài.
