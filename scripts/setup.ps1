@@ -56,6 +56,7 @@ function Set-EnvValue {
 $envLines = [System.Collections.Generic.List[string]]::new()
 if (Test-Path $envPath) {
     foreach ($line in Get-Content -LiteralPath $envPath) { $envLines.Add($line) }
+    Write-Host 'Found .env; it will be synchronized to the classroom logins when -Start is used.' -ForegroundColor Yellow
 } else {
     $envLines.Add('MYSQL_DATABASE=dean3_shop')
     $envLines.Add("MYSQL_USER=$demoMySqlUser")
@@ -69,8 +70,6 @@ if (Test-Path $envPath) {
     $envLines.Add("WORDPRESS_ADMIN_EMAIL=$demoWordPressEmail")
     [IO.File]::WriteAllLines($envPath, $envLines, [Text.UTF8Encoding]::new($false))
     Write-Host 'Created .env with fixed classroom logins and random internal-only secrets.' -ForegroundColor Green
-} else {
-    Write-Host 'Found .env; it will be synchronized to the classroom logins when -Start is used.' -ForegroundColor Yellow
 }
 
 Push-Location $projectRoot
@@ -112,10 +111,7 @@ FLUSH PRIVILEGES;
 
         # Grafana stores its admin password in grafana_data, so reset it there
         # before restarting with the matching .env value.
-        docker compose exec -T grafana grafana-cli admin reset-admin-password $demoGrafanaPassword
-        if ($LASTEXITCODE -ne 0) {
-            docker compose exec -T grafana grafana cli admin reset-admin-password $demoGrafanaPassword
-        }
+        docker compose exec -T grafana grafana cli admin reset-admin-password $demoGrafanaPassword
         if ($LASTEXITCODE -ne 0) { throw 'Could not update the Grafana admin password.' }
 
         Set-EnvValue $envLines 'MYSQL_USER' $demoMySqlUser

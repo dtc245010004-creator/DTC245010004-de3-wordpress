@@ -8,7 +8,7 @@ try {
     $checks = @(
         @{ Name = 'Website'; Uri = 'http://localhost:8080/' },
         @{ Name = 'phpMyAdmin'; Uri = 'http://localhost:8080/db-admin/' },
-        @{ Name = 'Grafana'; Uri = 'http://localhost:3000/login' },
+        @{ Name = 'Grafana'; Uri = 'http://localhost:3001/login' },
         @{ Name = 'Prometheus'; Uri = 'http://localhost:9090/-/healthy' }
     )
     foreach ($check in $checks) {

@@ -1,6 +1,6 @@
 # Truy vấn LogQL cho bản demo
 
-Mở Grafana tại `http://localhost:3000`, vào **Explore**, chọn datasource **Loki**.
+Mở Grafana tại `http://localhost:3001`, vào **Explore**, chọn datasource **Loki**.
 
 ## 1. Xem log của mọi container
 
